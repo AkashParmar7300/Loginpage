@@ -1,207 +1,202 @@
-import React, { useState } from 'react';
-import foodImage from './images/food.png'; // Ensure the path is correct
-import burgerImage from './images/pat.png'; // Ensure the path is correct
+import React, { useState } from "react";
+import styled from "styled-components";
+import { motion } from "framer-motion";
 
-const styles = {
-  container: {
-    width: '250px',
-    margin: '50px auto',
-    padding: '20px',
-    border: '1px solid #e5e5e5',
-    borderRadius: '15px',
-    textAlign: 'center',
-    backgroundColor: '#fff8e1',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    position: 'relative',
-    overflow: 'hidden',
-    backgroundImage: 'url(/images/food.png)', // Background image
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #ff4a4a; /* Red background color */
+`;
+
+const BoxContainer = styled.div`
+  width: 400px;
+  min-height: 500px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+`;
+
+const TopContainer = styled.div`
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(45deg, #ff4a4a, #4a90e2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+`;
+
+const BackDrop = styled(motion.div)`
+  width: 160%;
+  height: 500px;
+  position: absolute;
+  top: -290px;
+  left: -70px;
+  background: linear-gradient(45deg, #ff4a4a, #4a90e2);
+  border-radius: 50%;
+  transform: rotate(60deg);
+`;
+
+const HeaderContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+`;
+
+const HeaderText = styled.h2`
+  margin: 0;
+  font-size: 30px;
+`;
+
+const SmallText = styled.h5`
+  margin: 0;
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  margin-top: 7px;
+`;
+
+const InnerContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1.8em;
+`;
+
+const FormContainer = styled.form`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  height: 42px;
+  outline: none;
+  border: none;
+  border-bottom: 1.5px solid rgba(200, 200, 200, 0.4);
+  padding: 0px 10px;
+  margin-bottom: 10px;
+  transition: all 200ms ease-in-out;
+
+  &:focus {
+    border-bottom: 2px solid #4a90e2;
+  }
+`;
+
+const SubmitButton = styled.button`
+  width: 100%;
+  padding: 11px 1em;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 100px;
+  background: #4a90e2;
+  cursor: pointer;
+  transition: all 240ms ease-in-out;
+
+  &:hover {
+    background: #ff4a4a;
+  }
+`;
+
+const SwitchButton = styled.button`
+  margin-top: 10px;
+  background: none;
+  color: #4a90e2;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+
+  &:hover {
+    color: #ff4a4a;
+  }
+`;
+
+const backDropVariants = {
+  expanded: {
+    width: "233%",
+    height: "1050px",
+    borderRadius: "20%",
+    transform: "rotate(60deg)",
   },
-  heading: {
-    marginBottom: '15px',
-    fontSize: '28px',
-    color: '#d84315',
-    fontFamily: 'Arial, sans-serif',
-    animation: 'fadeIn 2s ease-in-out',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    zIndex: 1,
-  },
-  inputGroup: {
-    marginBottom: '15px',
-    textAlign: 'left',
-  },
-  input: {
-    width: '100%',
-    padding: '12px',
-    marginTop: '5px',
-    borderRadius: '8px',
-    border: '1px solid #d84315',
-    fontSize: '16px',
-    backgroundColor: '#fff',
-    animation: 'inputFocus 1s ease-in-out',
-  },
-  button: {
-    padding: '12px',
-    backgroundColor: '#d84315',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '16px',
-    cursor: 'pointer',
-    animation: 'buttonHover 0.5s ease-in-out',
-  },
-  toggle: {
-    marginTop: '15px',
-    fontSize: '14px',
-  },
-  toggleLink: {
-    color: '#d84315',
-    cursor: 'pointer',
-    textDecoration: 'underline',
-    animation: 'textBounce 1s infinite',
-  },
-  food: {
-    position: 'absolute',
-    bottom: '10px',
-    left: '-100px',
-    width: '150px',
-    animation: 'moveFood 10s infinite',
-  },
-  burger: {
-    position: 'absolute',
-    top: '10px',
-    right: '-100px',
-    width: '150px',
-    animation: 'moveBurger 12s infinite',
-  },
-  '@keyframes moveFood': {
-    '0%': { transform: 'translateX(0)' },
-    '50%': { transform: 'translateX(200px)' },
-    '100%': { transform: 'translateX(0)' },
-  },
-  '@keyframes moveBurger': {
-    '0%': { transform: 'translateX(0)' },
-    '50%': { transform: 'translateX(-200px)' },
-    '100%': { transform: 'translateX(0)' },
-  },
-  '@keyframes fadeIn': {
-    '0%': { opacity: '0' },
-    '100%': { opacity: '1' },
-  },
-  '@keyframes inputFocus': {
-    '0%': { boxShadow: '0 0 5px rgba(0, 0, 0, 0.2)' },
-    '100%': { boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)' },
-  },
-  '@keyframes buttonHover': {
-    '0%': { backgroundColor: '#d84315' },
-    '50%': { backgroundColor: '#f57c00' },
-    '100%': { backgroundColor: '#d84315' },
-  },
-  '@keyframes textBounce': {
-    '0%, 100%': { transform: 'translateY(0)' },
-    '50%': { transform: 'translateY(-10px)' },
+  collapsed: {
+    width: "40%",
+    height: "500px",
+    borderRadius: "50%",
+    transform: "rotate(60deg)",
   },
 };
 
-function LoginPage() {
+const expandingTransition = {
+  type: "spring",
+  duration: 1.8,
+  stiffness: 25,
+};
+
+export default function LoginPage() {
+  const [isExpanded, setExpanded] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const playExpandingAnimation = () => {
+    setExpanded(true);
+    setTimeout(() => {
+      setExpanded(false);
+    }, expandingTransition.duration * 1000 - 1500);
+  };
 
-    if (phoneNumber === '' || password === '') {
-      alert('Please fill in all fields.');
-      return;
-    }
+  const switchToRegister = () => {
+    playExpandingAnimation();
+    setTimeout(() => {
+      setIsLogin(false);
+    }, 400);
+  };
 
-    if (!isLogin && password !== confirmPassword) {
-      alert('Passwords do not match.');
-      return;
-    }
-
-    if (isLogin) {
-      console.log('Logging in with:', { phoneNumber, password });
-    } else {
-      console.log('Registering with:', { phoneNumber, password });
-    }
-
-    setPhoneNumber('');
-    setPassword('');
-    setConfirmPassword('');
+  const switchToLogin = () => {
+    playExpandingAnimation();
+    setTimeout(() => {
+      setIsLogin(true);
+    }, 400);
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>{isLogin ? 'Login' : 'Register'}</h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.inputGroup}>
-          <label htmlFor="phoneNumber">Phone Number:</label>
-          <input
-            type="tel"
-            id="phoneNumber"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            style={styles.input}
-            placeholder="Enter your phone number"
-            required
+    <Container>
+      <BoxContainer>
+        <TopContainer>
+          <BackDrop
+            initial={false}
+            animate={isExpanded ? "expanded" : "collapsed"}
+            variants={backDropVariants}
+            transition={expandingTransition}
           />
-        </div>
-        <div style={styles.inputGroup}>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={styles.input}
-            placeholder="Enter your password"
-            required
-          />
-        </div>
-        {!isLogin && (
-          <div style={styles.inputGroup}>
-            <label htmlFor="confirmPassword">Confirm Password:</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              style={styles.input}
-              placeholder="Confirm your password"
-              required
-            />
-          </div>
-        )}
-        <button type="submit" style={styles.button}>{isLogin ? 'Login' : 'Register'}</button>
-      </form>
-      <div style={styles.toggle}>
-        {isLogin ? (
-          <p>
-            Don't have an account?{' '}
-            <span onClick={() => setIsLogin(false)} style={styles.toggleLink}>
-              Register here
-            </span>
-          </p>
-        ) : (
-          <p>
-            Already have an account?{' '}
-            <span onClick={() => setIsLogin(true)} style={styles.toggleLink}>
-              Login here
-            </span>
-          </p>
-        )}
-      </div>
-      <img src={foodImage} alt="Pizza" style={styles.food} />
-      <img src={burgerImage} alt="Burger" style={styles.pat} />
-    </div>
+          <HeaderContainer>
+            <HeaderText>{isLogin ? "Login" : "Register"}</HeaderText>
+            <SmallText>
+              {isLogin ? "Please login with your phone number" : "Please register with your phone number"}
+            </SmallText>
+          </HeaderContainer>
+        </TopContainer>
+        <InnerContainer>
+          <FormContainer>
+            <Input type="tel" placeholder="Phone Number" required />
+            <Input type="password" placeholder="Password" required />
+            {!isLogin && <Input type="password" placeholder="Confirm Password" required />}
+            <SubmitButton type="submit">
+              {isLogin ? "Login" : "Register"}
+            </SubmitButton>
+            <SwitchButton onClick={isLogin ? switchToRegister : switchToLogin}>
+              {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
+            </SwitchButton>
+          </FormContainer>
+        </InnerContainer>
+      </BoxContainer>
+    </Container>
   );
 }
-
-export default LoginPage;
